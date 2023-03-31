@@ -852,10 +852,11 @@ namespace FirmwareUpdater
                 catch { }
                 if (bytes >= 7)//At least 9 bytes received
                 {
-                    System.Threading.Thread.Sleep(100); // Wait 100ms
+                    System.Threading.Thread.Sleep(10); // Wait 10ms
                     bytes = port.BytesToRead;
                     break;
                 }
+                System.Threading.Thread.Sleep(10); // Wait 10ms
             }
             return bytes;
         }
