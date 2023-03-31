@@ -1,0 +1,2 @@
+copy /y $(ProjectDir)\system_software_update.ico $(TargetDir)
+copy /y $(ProjectDir)\Lib\reader3.dll $(TargetDir)

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?ifdef env.xver_FirmwareUpdater  ?>
+  <?define PRODUCTVERSION=$(env.xver_FirmwareUpdater) ?>
+  <?else ?>
+  <?define PRODUCTVERSION="0.0.0.0" ?>
+  <?endif ?>
+</Include>

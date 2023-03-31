@@ -1,0 +1,11 @@
+FirmwareUpdater/obj/
+FirmwareUpdater/bin/
+FirmwareUpdater/.svn/
+FirmwareUpdater/lib/.svn/
+FirmwareUpdater/shared/.svn
+FirmwareUpdateInstaller/obj/
+FirmwareUpdateInstaller/bin/
+FirmwareUpdateInstaller/.svn/
+/.svn/
+/packages/
+FirmwareUpdater/Lib/Reader3.pdb

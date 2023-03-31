@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="INSTALLLOCATION">
+            <Component Id="cmpB0723664E63632132A25998B61AD8AE2" Guid="*">
+                <File Id="fil40CBB6E3F2465958775DCBFE9836F5D6" KeyPath="yes" Source="$(var.SourceDir)\CommandLine.dll" />
+            </Component>
+            
+            <Component Id="cmp2F496B690F1E5B54D0CCA59CC43DDAE8" Guid="*">
+                <File Id="filD3444C694FBD9A716E14ECCDC631F694" KeyPath="yes" Source="$(var.SourceDir)\FirmwareUpdater.exe" />
+            </Component>
+            <Component Id="cmp13366C40E1DF7CE6E28C99A7DA502CAA" Guid="*">
+                <File Id="fil8B4ADC4A7D30FB5AFBEBDD6C457AE199" KeyPath="yes" Source="$(var.SourceDir)\FirmwareUpdater.exe.config" />
+            </Component>
+            
+            
+            
+            
+            <Component Id="cmpE537B25CEA9EF3EE077C37ADA00156DD" Guid="*">
+                <File Id="filC6991944E5F43792D19B68E53F36F723" KeyPath="yes" Source="$(var.SourceDir)\Reader3.dll" />
+            </Component>
+            <Component Id="cmpCCCD3B87659242ECB5DC9F9FB9A09F65" Guid="*">
+                <File Id="fil90E87E4E5C9FD68FAA1138ACB3F4ED70" KeyPath="yes" Source="$(var.SourceDir)\Reader3.ilk" />
+            </Component>
+            <Component Id="cmpB8F27EE8C3248B574A80123BEEA0C1C2" Guid="*">
+                <File Id="fil197B1438DF348122CE2FF519DE39FE44" KeyPath="yes" Source="$(var.SourceDir)\Reader3Managed.dll" />
+            </Component>
+            
+            <Component Id="cmp04B0C4119ABAEC0B6AA37D97947DC06C" Guid="*">
+                <File Id="filD50D40007EF547EF80712177775753C3" KeyPath="yes" Source="$(var.SourceDir)\system_software_update.ico" />
+            </Component>
+            <Component Id="cmp683CDB731DBBF522BB056F6DBABB2F96" Guid="*">
+                <File Id="fil12E8AF5F8278713E6517A53642B05128" KeyPath="yes" Source="$(var.SourceDir)\TruDose-BG_MK3.1_V2.0.0.50.bin" />
+            </Component>
+            <Component Id="cmp926E7E6861F2823FBE8CEFFC28D7B609" Guid="*">
+                <File Id="fil02534B706407E7660C2EBBBFE8B8279E" KeyPath="yes" Source="$(var.SourceDir)\TruDose-BG_MK3.1_V2.0.0.51.bin" />
+            </Component>
+            <Component Id="cmp19E541ADB75EA14F4C1DBCC8B30704F2" Guid="*">
+                <File Id="filEDA1511687A623A9F68197B8F8799B19" KeyPath="yes" Source="$(var.SourceDir)\TruDose-BG_MK3.1_V2.0.0.54.bin" />
+            </Component>
+            <Component Id="cmpC9A4A7EBF93C360B65AC6C10CA000634" Guid="*">
+                <File Id="fil5ECFE6D9A2F607CBC2FA1C9EFA32E61B" KeyPath="yes" Source="$(var.SourceDir)\TruDose_BG_tgt_revG_enc.bin" />
+            </Component>
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="ProductComponents">
+            <ComponentRef Id="cmpB0723664E63632132A25998B61AD8AE2" />
+            
+            <ComponentRef Id="cmp2F496B690F1E5B54D0CCA59CC43DDAE8" />
+            <ComponentRef Id="cmp13366C40E1DF7CE6E28C99A7DA502CAA" />
+            
+            
+            
+            
+            <ComponentRef Id="cmpE537B25CEA9EF3EE077C37ADA00156DD" />
+            <ComponentRef Id="cmpCCCD3B87659242ECB5DC9F9FB9A09F65" />
+            <ComponentRef Id="cmpB8F27EE8C3248B574A80123BEEA0C1C2" />
+            
+            <ComponentRef Id="cmp04B0C4119ABAEC0B6AA37D97947DC06C" />
+            <ComponentRef Id="cmp683CDB731DBBF522BB056F6DBABB2F96" />
+            <ComponentRef Id="cmp926E7E6861F2823FBE8CEFFC28D7B609" />
+            <ComponentRef Id="cmp19E541ADB75EA14F4C1DBCC8B30704F2" />
+            <ComponentRef Id="cmpC9A4A7EBF93C360B65AC6C10CA000634" />
+        </ComponentGroup>
+    </Fragment>
+</Wix>
