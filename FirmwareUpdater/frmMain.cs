@@ -14,6 +14,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security.Cryptography;
+using GLib;
+using Thread = System.Threading.Thread;
 
 namespace FirmwareUpdater
 {
@@ -565,7 +567,7 @@ namespace FirmwareUpdater
                 {
                     controller.StartUpgrade();
                     byte[] bytes = File.ReadAllBytes(edtFileName.Text);
-                    Task sendTask = new Task(() => xmodem.Send(bytes));
+                    System.Threading.Tasks.Task sendTask = new System.Threading.Tasks.Task(() => xmodem.Send(bytes));
                     sendTask.Start();
                 }
             }
@@ -601,7 +603,7 @@ namespace FirmwareUpdater
                 if (m_autorun)
                 {
                     ResultCode = ResultCodes.OK;
-                    Application.Exit();
+                    System.Windows.Forms.Application.Exit();
                 }
                 else
                 {
@@ -645,7 +647,7 @@ namespace FirmwareUpdater
                         if (m_autorun)
                         {
                             ResultCode = ResultCodes.ProgramingFailed;
-                            Application.Exit();
+                            System.Windows.Forms.Application.Exit();
                         }
                         else
                         {
@@ -790,26 +792,19 @@ namespace FirmwareUpdater
         //======================================================================
         private bool CmdA1()
         {
-            int bytes = HowManyBytes(); //How many bytes arrived?
-            if (bytes >= 7)
+            int bytes = 0;
+            byte[] buffer = new byte[100];
+            byte[] EmptyBuffer = new byte[0];
+            System.Threading.Thread.Sleep(10); // Wait 10ms
+            for (int i = 0; i < 100; i++)
             {
-                byte[] buffer = new byte[bytes];
-                // Read buffer
                 try
                 {
-                    port.Read(buffer, 0, bytes);
+                    bytes += port.Read(buffer, bytes, port.BytesToRead);
+                    if (checkChecksum(buffer, bytes) == true) return true;
                 }
                 catch { }
-                buffer = AlignBuffer(buffer);
-                if (buffer.Length == 0) return false;
-                if (checkChecksum(buffer, buffer.Length))//Checksum ok?
-                {
-                    return true;
-                }
-                else // checksum fail, clear buffer
-                {
-                    return false;
-                }
+                System.Threading.Thread.Sleep(10); // Wait 10ms
             }
             return false;
         }
@@ -837,28 +832,6 @@ namespace FirmwareUpdater
             int bytes = port.BytesToRead;
             byte[] buffer = new byte[bytes];
             port.Read(buffer, 0, bytes);
-        }
-
-        private int HowManyBytes()
-        {
-            int bytes = -1;
-            System.Threading.Thread.Sleep(100); // Wait 100ms
-            for (int i = 0; i < 100; i++)
-            {
-                try
-                {
-                    bytes = port.BytesToRead;
-                }
-                catch { }
-                if (bytes >= 7)//At least 9 bytes received
-                {
-                    System.Threading.Thread.Sleep(10); // Wait 10ms
-                    bytes = port.BytesToRead;
-                    break;
-                }
-                System.Threading.Thread.Sleep(10); // Wait 10ms
-            }
-            return bytes;
         }
 
         //======================================================================
@@ -890,33 +863,36 @@ namespace FirmwareUpdater
         {
             UInt16 BufferChecksum, CalcChecksum;
 
-            if (bytes >= 7)
+            try
             {
-                UInt16 len = BitConverter.ToUInt16(buffer, 1);
-                if (bytes >= len)
-                {
-                    try
-                    {
-                        BufferChecksum = BitConverter.ToUInt16(buffer, len - 3);
-                        CalcChecksum = CalculateCRC(buffer, 0, (uint)(len - 3));
-                    }
-                    catch 
-                    { 
-                        return false; 
-                    } 
-                }
-                else 
+                // Find Start of frame 0xC0
+                int start = FindStartofFrame(buffer);
+                if (start < 0) return false;
+                int len = GetLength(buffer, start);
+                BufferChecksum = BitConverter.ToUInt16(buffer, start + len - 3);
+                CalcChecksum = CalculateCRC(buffer, (uint)start, (uint)(start + len - 3));
+                if (CalcChecksum == BufferChecksum) 
+                    return true;
+                else
                     return false;
             }
-            else 
-                return false;
-            
-            if (CalcChecksum == BufferChecksum) 
-                return true;
-            else
-                return false;
+            catch 
+            { 
+                return false; 
+            } 
         }
-
+        int FindStartofFrame(byte[] buffer)
+        {
+            for (int start=0; start < buffer.Length; start++)
+            {
+                if ((buffer[start] == 0xC0)) return start;
+            }
+            return -1;
+        }
+        int GetLength(byte[] buffer, int start)
+        {
+            return (int)buffer[start + 1];
+        }
         //======================================================================
         //!	\fn     static int AddChecksum(int length)
         //! \brief  Claculation of checksum and add it to transmit buffer
@@ -1030,40 +1006,23 @@ namespace FirmwareUpdater
             /*
              * How many bytes arrived?
             */
+            byte[] buffer = new byte[100];
+            System.Threading.Thread.Sleep(10); // Wait 10ms
             for (int i = 0; i < 100; i++)
             {
-                System.Threading.Thread.Sleep(1);
                 try
                 {
-                    bytes = port.BytesToRead;
+                    bytes += port.Read(buffer, bytes, port.BytesToRead);
+                    if (checkChecksum(buffer, bytes) == true)
+                    {
+                        if (buffer[4] == 6) return true; //ACK->true
+                        else return false; //NAK->false
+                    }
                 }
                 catch { }
-                if (bytes >= 8) break;
+                System.Threading.Thread.Sleep(10); // Wait 10ms
             }
-            byte[] buffer = new byte[bytes];
-            try
-            {
-                bytes = port.BytesToRead;
-                port.Read(buffer, 0, bytes);
-                buffer = AlignBuffer(buffer);
-            }
-            catch { }
-            if (checkChecksum(buffer, bytes)) // checksum o.k.
-            {
-            }
-            else // checksum fail -> NAK
-            {
-                return false;
-            }
-            try
-            {
-                if (buffer[4] == 6) return true; //ACK->true
-                else return false; //NAK->false
-            }
-            catch
-            {
-                return false;
-            }
+            return false;
         }
 
         private bool ResetTrudose()
